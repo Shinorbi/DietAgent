@@ -13,13 +13,36 @@ interface DietPlanGeneratorProps {
 }
 
 export function DietPlanGenerator({ onGenerated }: DietPlanGeneratorProps) {
-  const [formData, setFormData] = useState({
+  interface FormData {
+    weight: string;
+    height: string;
+    age: string;
+    gender: string;
+    activity_level: string;
+    goal: string;
+    country: string;
+    cuisine_preferences: string[];
+    dietary_restrictions: string[];
+    allergies: string[];
+    budget_per_day: string;
+    budget_per_week: string;
+    currency: string;
+  }
+
+  const [formData, setFormData] = useState<FormData>({
     weight: '70',
     height: '170',
     age: '25',
     gender: 'male',
     activity_level: 'moderate',
     goal: 'maintain_weight',
+    country: 'Bangladesh',
+    cuisine_preferences: ['bengali'],
+    dietary_restrictions: [] as string[],
+    allergies: [] as string[],
+    budget_per_day: '',
+    budget_per_week: '',
+    currency: 'BDT',
   });
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -27,6 +50,34 @@ export function DietPlanGenerator({ onGenerated }: DietPlanGeneratorProps) {
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleArrayChange = (field: string, value: string, checked: boolean) => {
+    setFormData(prev => {
+      const current = prev[field] as string[];
+      const updated = checked 
+        ? [...current, value] 
+        : current.filter(item => item !== value);
+      return { ...prev, [field]: updated };
+    });
+  };
+
+  const resetForm = () => {
+    setFormData({
+      weight: '70',
+      height: '170',
+      age: '25',
+      gender: 'male',
+      activity_level: 'moderate',
+      goal: 'maintain_weight',
+      country: 'Bangladesh',
+      cuisine_preferences: ['bengali'],
+      dietary_restrictions: [] as string[],
+      allergies: [] as string[],
+      budget_per_day: '',
+      budget_per_week: '',
+      currency: 'BDT',
+    });
   };
 
   const generatePlan = async () => {
@@ -37,6 +88,13 @@ export function DietPlanGenerator({ onGenerated }: DietPlanGeneratorProps) {
       gender: formData.gender,
       activity_level: formData.activity_level,
       goal: formData.goal,
+      country: formData.country,
+      cuisine_preferences: formData.cuisine_preferences,
+      dietary_restrictions: formData.dietary_restrictions,
+      allergies: formData.allergies,
+      budget_per_day: formData.budget_per_day ? parseFloat(formData.budget_per_day) : null,
+      budget_per_week: formData.budget_per_week ? parseFloat(formData.budget_per_week) : null,
+      currency: formData.currency,
     };
 
     if (isNaN(data.weight) || isNaN(data.height) || isNaN(data.age)) {
@@ -359,23 +417,16 @@ export function DietPlanGenerator({ onGenerated }: DietPlanGeneratorProps) {
                     ))}
                   </View>
                 )}
-                <ThemedButton
-                  style={styles.regenerateButton}
-                  onPress={() => {
-                    setFormData({
-                      weight: '70',
-                      height: '170',
-                      age: '25',
-                      gender: 'male',
-                      activity_level: 'moderate',
-                      goal: 'maintain_weight',
-                    });
-                    setResult(null);
-                    setError('');
-                  }}
-                >
-                  Regenerate Plan
-                </ThemedButton>
+<ThemedButton
+          style={styles.regenerateButton}
+          onPress={() => {
+            resetForm();
+            setResult(null);
+            setError('');
+          }}
+        >
+          Regenerate Plan
+        </ThemedButton>
               </>
             )}
           </View>
@@ -513,6 +564,235 @@ export function DietPlanGenerator({ onGenerated }: DietPlanGeneratorProps) {
             </TouchableOpacity>
           ))}
         </View>
+      </View>
+
+      {/* Actions */}
+      <ThemedButton
+        style={styles.generateButton}
+        onPress={generatePlan}
+        disabled={loading}
+      >
+        {loading ? 'Generating...' : 'Generate Diet Plan'}
+      </ThemedButton>
+
+      {/* Error Message */}
+      {error && (
+        <ThemedText style={styles.error}>{error}</ThemedText>
+      )}
+
+      {/* Country Selection */}
+      <View style={styles.formGroup}>
+        <ThemedText style={styles.label}>Country:</ThemedText>
+        <View style={styles.selectContainer}>
+          {[
+            { value: 'Bangladesh', label: 'Bangladesh', currency: 'BDT' },
+            { value: 'India', label: 'India', currency: 'INR' },
+            { value: 'Pakistan', label: 'Pakistan', currency: 'PKR' },
+            { value: 'Sri Lanka', label: 'Sri Lanka', currency: 'LKR' },
+            { value: 'Nepal', label: 'Nepal', currency: 'NPR' },
+            { value: 'Bhutan', label: 'Bhutan', currency: 'BTN' },
+            { value: 'Maldives', label: 'Maldives', currency: 'MVR' },
+            { value: 'Afghanistan', label: 'Afghanistan', currency: 'AFN' },
+            { value: 'Myanmar', label: 'Myanmar', currency: 'MMK' },
+            { value: 'Thailand', label: 'Thailand', currency: 'THB' },
+            { value: 'Vietnam', label: 'Vietnam', currency: 'VND' },
+            { value: 'Cambodia', label: 'Cambodia', currency: 'KHR' },
+            { value: 'Laos', label: 'Laos', currency: 'LAK' },
+            { value: 'Malaysia', label: 'Malaysia', currency: 'MYR' },
+            { value: 'Singapore', label: 'Singapore', currency: 'SGD' },
+            { value: 'Indonesia', label: 'Indonesia', currency: 'IDR' },
+            { value: 'Philippines', label: 'Philippines', currency: 'PHP' },
+            { value: 'Brunei', label: 'Brunei', currency: 'BND' },
+            { value: 'East Timor', label: 'East Timor', currency: 'USD' },
+            { value: 'Germany', label: 'Germany', currency: 'EUR' },
+            { value: 'France', label: 'France', currency: 'EUR' },
+            { value: 'Italy', label: 'Italy', currency: 'EUR' },
+            { value: 'Spain', label: 'Spain', currency: 'EUR' },
+            { value: 'UK', label: 'UK', currency: 'GBP' },
+            { value: 'Netherlands', label: 'Netherlands', currency: 'EUR' },
+            { value: 'Belgium', label: 'Belgium', currency: 'EUR' },
+            { value: 'Luxembourg', label: 'Luxembourg', currency: 'EUR' },
+            { value: 'Ireland', label: 'Ireland', currency: 'EUR' },
+            { value: 'Portugal', label: 'Portugal', currency: 'EUR' },
+            { value: 'Austria', label: 'Austria', currency: 'EUR' },
+            { value: 'Finland', label: 'Finland', currency: 'EUR' },
+            { value: 'Greece', label: 'Greece', currency: 'EUR' },
+            { value: 'Cyprus', label: 'Cyprus', currency: 'EUR' },
+            { value: 'Malta', label: 'Malta', currency: 'EUR' },
+            { value: 'Slovakia', label: 'Slovakia', currency: 'EUR' },
+            { value: 'Slovenia', label: 'Slovenia', currency: 'EUR' },
+            { value: 'Estonia', label: 'Estonia', currency: 'EUR' },
+            { value: 'Latvia', label: 'Latvia', currency: 'EUR' },
+            { value: 'Lithuania', label: 'Lithuania', currency: 'EUR' },
+            { value: 'Poland', label: 'Poland', currency: 'PLN' },
+            { value: 'Czech Republic', label: 'Czech Republic', currency: 'CZK' },
+            { value: 'Hungary', label: 'Hungary', currency: 'HUF' },
+            { value: 'Romania', label: 'Romania', currency: 'RON' },
+            { value: 'Bulgaria', label: 'Bulgaria', currency: 'BGN' },
+            { value: 'Croatia', label: 'Croatia', currency: 'HRK' },
+            { value: 'Denmark', label: 'Denmark', currency: 'DKK' },
+            { value: 'Sweden', label: 'Sweden', currency: 'SEK' },
+            { value: 'Norway', label: 'Norway', currency: 'NOK' },
+            { value: 'Iceland', label: 'Iceland', currency: 'ISK' },
+            { value: 'USA', label: 'USA', currency: 'USD' },
+            { value: 'Canada', label: 'Canada', currency: 'CAD' },
+            { value: 'Australia', label: 'Australia', currency: 'AUD' },
+          ].map((country) => (
+            <TouchableOpacity
+              key={country.value}
+              style={[
+                styles.selectButton,
+                formData.country === country.value && styles.selectButtonActive,
+              ]}
+              onPress={() => {
+                handleChange('country', country.value);
+                handleChange('currency', country.currency);
+              }}
+            >
+              <ThemedText
+                style={[
+                  styles.selectButtonText,
+                  formData.country === country.value && styles.selectButtonTextActive,
+                ]}
+              >
+                {country.label}
+              </ThemedText>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      {/* Cuisine Preferences */}
+      <View style={styles.formGroup}>
+        <ThemedText style={styles.label}>Cuisine Preferences:</ThemedText>
+        <View style={styles.selectContainer}>
+          {[
+            { value: 'bengali', label: 'Bengali' },
+            { value: 'indian', label: 'Indian' },
+            { value: 'thai', label: 'Thai' },
+            { value: 'vietnamese', label: 'Vietnamese' },
+            { value: 'chinese', label: 'Chinese' },
+            { value: 'japanese', label: 'Japanese' },
+            { value: 'korean', label: 'Korean' },
+            { value: 'malaysian', label: 'Malaysian' },
+            { value: 'indonesian', label: 'Indonesian' },
+            { value: 'filipino', label: 'Filipino' },
+            { value: 'italian', label: 'Italian' },
+            { value: 'french', label: 'French' },
+            { value: 'spanish', label: 'Spanish' },
+            { value: 'greek', label: 'Greek' },
+            { value: 'turkish', label: 'Turkish' },
+            { value: 'mexican', label: 'Mexican' },
+            { value: 'american', label: 'American' },
+            { value: 'canadian', label: 'Canadian' },
+            { value: 'australian', label: 'Australian' },
+          ].map((cuisine) => (
+            <TouchableOpacity
+              key={cuisine.value}
+              style={[
+                styles.selectButton,
+                formData.cuisine_preferences.includes(cuisine.value) && styles.selectButtonActive,
+              ]}
+              onPress={() => handleArrayChange('cuisine_preferences', cuisine.value, !formData.cuisine_preferences.includes(cuisine.value))}
+            >
+              <ThemedText
+                style={[
+                  styles.selectButtonText,
+                  formData.cuisine_preferences.includes(cuisine.value) && styles.selectButtonTextActive,
+                ]}
+              >
+                {cuisine.label}
+              </ThemedText>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      {/* Dietary Restrictions */}
+      <View style={styles.formGroup}>
+        <ThemedText style={styles.label}>Dietary Restrictions:</ThemedText>
+        <View style={styles.selectContainer}>
+          {[
+            { value: 'vegetarian', label: 'Vegetarian' },
+            { value: 'vegan', label: 'Vegan' },
+            { value: 'gluten_free', label: 'Gluten-free' },
+            { value: 'lactose_free', label: 'Lactose-free' },
+            { value: 'meat_eater', label: 'Meat Eater' },
+            { value: 'pescatarian', label: 'Pescatarian' },
+          ].map((restriction) => (
+            <TouchableOpacity
+              key={restriction.value}
+              style={[
+                styles.selectButton,
+                formData.dietary_restrictions.includes(restriction.value) && styles.selectButtonActive,
+              ]}
+              onPress={() => handleArrayChange('dietary_restrictions', restriction.value, !formData.dietary_restrictions.includes(restriction.value))}
+            >
+              <ThemedText
+                style={[
+                  styles.selectButtonText,
+                  formData.dietary_restrictions.includes(restriction.value) && styles.selectButtonTextActive,
+                ]}
+              >
+                {restriction.label}
+              </ThemedText>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      {/* Allergies */}
+      <View style={styles.formGroup}>
+        <ThemedText style={styles.label}>Allergies:</ThemedText>
+        <View style={styles.selectContainer}>
+          {[
+            { value: 'nuts', label: 'Nuts' },
+            { value: 'dairy', label: 'Dairy' },
+            { value: 'eggs', label: 'Eggs' },
+            { value: 'shellfish', label: 'Shellfish' },
+            { value: 'soy', label: 'Soy' },
+            { value: 'wheat', label: 'Wheat' },
+            { value: 'fish', label: 'Fish' },
+          ].map((allergy) => (
+            <TouchableOpacity
+              key={allergy.value}
+              style={[
+                styles.selectButton,
+                formData.allergies.includes(allergy.value) && styles.selectButtonActive,
+              ]}
+              onPress={() => handleArrayChange('allergies', allergy.value, !formData.allergies.includes(allergy.value))}
+            >
+              <ThemedText
+                style={[
+                  styles.selectButtonText,
+                  formData.allergies.includes(allergy.value) && styles.selectButtonTextActive,
+                ]}
+              >
+                {allergy.label}
+              </ThemedText>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      {/* Budget */}
+      <View style={styles.formGroup}>
+        <ThemedText style={styles.label}>Daily Budget:</ThemedText>
+        <ThemedTextInput
+          value={formData.budget_per_day}
+          onChangeText={(text) => handleChange('budget_per_day', text)}
+          placeholder="0"
+          style={styles.input}
+          keyboardType="numeric"
+        />
+        <ThemedText style={styles.label}>Weekly Budget:</ThemedText>
+        <ThemedTextInput
+          value={formData.budget_per_week}
+          onChangeText={(text) => handleChange('budget_per_week', text)}
+          placeholder="0"
+          style={styles.input}
+          keyboardType="numeric"
+        />
       </View>
 
       {/* Actions */}
