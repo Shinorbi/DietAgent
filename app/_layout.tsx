@@ -11,6 +11,7 @@ export default function Layout() {
     >
       <Tabs.Screen name="index" options={{ title: "Home" }} />
       <Tabs.Screen name="log" options={{ title: "Log Meal" }} />
+      <Tabs.Screen name="plan" options={{ title: "Plan" }} />
       <Tabs.Screen name="profile" options={{ title: "Profile" }} />
     </Tabs>
   );
@@ -31,6 +32,7 @@ function FloatingTabBar({ state, descriptors, navigation }: any) {
           const icons: any = {
             index: "home-outline",
             log: "fast-food-outline",
+            plan: "calendar-outline",
             profile: "person-outline",
           };
           const iconName = icons[route.name];
