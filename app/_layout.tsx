@@ -2,18 +2,21 @@ import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function Layout() {
   return (
-    <Tabs
-      screenOptions={{ headerShown: true }}
-      tabBar={(props) => <FloatingTabBar {...props} />}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Tabs
+        screenOptions={{ headerShown: true }}
+        tabBar={(props) => <FloatingTabBar {...props} />}
     >
       <Tabs.Screen name="index" options={{ title: "Home" }} />
       <Tabs.Screen name="log" options={{ title: "Log Meal" }} />
       <Tabs.Screen name="plan" options={{ title: "Plan" }} />
       <Tabs.Screen name="profile" options={{ title: "Profile" }} />
     </Tabs>
+    </GestureHandlerRootView>
   );
 }
 

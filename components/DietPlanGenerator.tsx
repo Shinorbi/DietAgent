@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
-import { ThemedView } from '@/components/themed-view';
+import { ThemedButton } from '@/components/themed-button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedTextInput } from '@/components/themed-text-input';
-import { ThemedButton } from '@/components/themed-button';
+import { ThemedView } from '@/components/themed-view';
+import React, { useState } from 'react';
 // import { ThemedScrollView } from '@/components/themed-scroll-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { StyleSheet, View, TouchableOpacity, FlatList } from 'react-native';
 import { DietAgentService } from '@/services/dietAgentService';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 interface DietPlanGeneratorProps {
   onGenerated?: (data: any) => void;
@@ -54,7 +53,7 @@ export function DietPlanGenerator({ onGenerated }: DietPlanGeneratorProps) {
 
   const handleArrayChange = (field: string, value: string, checked: boolean) => {
     setFormData(prev => {
-      const current = prev[field] as string[];
+      const current = prev.cuisine_preferences as string[];
       const updated = checked 
         ? [...current, value] 
         : current.filter(item => item !== value);
@@ -441,7 +440,9 @@ export function DietPlanGenerator({ onGenerated }: DietPlanGeneratorProps) {
   };
 
   return (
+
     <ThemedView style={styles.container}>
+      
       <ThemedText style={styles.title}>Diet Plan Generator</ThemedText>
 
       {/* Form Fields */}
