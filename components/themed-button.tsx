@@ -1,4 +1,3 @@
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import React from 'react';
 import { Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 
@@ -17,10 +16,8 @@ export function ThemedButton({
   textStyle,
   disabled = false,
 }: ThemedButtonProps) {
-  const colorScheme = useColorScheme();
-  
   const defaultButtonStyle: ViewStyle = {
-    backgroundColor: disabled ? '#ccc' : (colorScheme === 'dark' ? '#333' : '#f0f0f0'),
+    backgroundColor: disabled ? '#ccc' : '#f0f0f0',
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
@@ -29,7 +26,7 @@ export function ThemedButton({
   };
 
   const defaultTextStyle: TextStyle = {
-    color: disabled ? '#888' : (colorScheme === 'dark' ? '#fff' : '#000'),
+    color: disabled ? '#888' : '#000',
     fontSize: 16,
     fontWeight: '600',
   };
